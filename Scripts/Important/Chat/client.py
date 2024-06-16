@@ -33,6 +33,10 @@ def handle_server():
                     name = dat.split("<ac>")[1].split("|")[1]
                     msg = dat.split("<ac>")[1].split("|")[2]
                     print(f"[All Chat] {name}: {msg}")
+                if dat.startswith("<dm>"):
+                    name = dat.split("<dm>")[1].split("|")[1]
+                    msg = dat.split("<dm>")[1].split("|")[2]
+                    print(f"{name} -> You: {msg}")
             elif dat.startswith("<err>"):
                 error1 = dat.split("<err>")[1]
                 print(f"Error: {error1}")
@@ -55,6 +59,12 @@ def handle_server():
                             clients[i].pr()
                             del clients[i]
                             break
+                if dat.startswith("<client_rename>"):
+                    new_client_name = dat.split("|")[1]
+                    new_client_id = dat.split("|")[2]
+                    for i in range(len(clients)):
+                        if clients[i].id == new_client_id:
+                            clients[i].name = new_client_name
                 
 
 def setup():
@@ -70,4 +80,4 @@ def setup():
     server_thread.start()
 
     
-    return [client_socket,server_thread]
+    return [client_socket,server_thread,clients]
