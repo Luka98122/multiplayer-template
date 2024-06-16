@@ -13,8 +13,9 @@ class Client():
     def pr(self):
         print(f"Client: {self.name}, ID: {self.id}")
 clients = []
-
+client_socket = 0
 def handle_server():
+    global client_socket
     while True:
         try:
             data = client_socket.recv(1024)
@@ -53,6 +54,7 @@ def handle_server():
                             break
 
 def setup():
+    global client_socket
     try:
         client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         client_socket.connect((SERVER_HOST, SERVER_PORT))
@@ -64,4 +66,4 @@ def setup():
     server_thread.start()
 
     
-    return client_socket
+    return [client_socket,server_thread]

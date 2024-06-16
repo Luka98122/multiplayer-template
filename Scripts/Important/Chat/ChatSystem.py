@@ -8,7 +8,7 @@ pygame.init()
 window = pygame.display.set_mode((800,600))
 sat = pygame.time.Clock()
 
-client_socket = client.setup()
+client_socket,server_thread = client.setup()
 client_socket.sendall("<set_name>DekiNPC".encode())
 def chat():
     running = True
