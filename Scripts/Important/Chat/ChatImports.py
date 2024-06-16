@@ -11,12 +11,12 @@ TextBox.set_alpha(70)
 InputTextBox = pygame.image.load("Pictures\TextBox\InputTextBox.png")
 
 class ChatBox():
-    def __init__(self, enabled  , rect , message , reachedMessageLimit ):
+    def __init__(self, enabled  , rect , message ):
         self.enabled = enabled
         self.rect = rect
         self.message = message
         self.enableCooldown = 0.2
-        self.reachedMessageLimit = reachedMessageLimit
+    
     def displayChat(self , surface , cooldownrenderer , input_message_render):
         if self.enabled:
             self.enableCooldown -= 1/30
@@ -45,12 +45,13 @@ class ChatBox():
                     Chat.message = Chat.message[:-1]
                     
                 else:
-                    if(self.reachedMessageLimit):
-                        if(len(Chat.message) < 25):
-                            self.reachedMessageLimit = False
-                            Chat.message += chr(event.key)
-                        else:             
-                            print("Reached Limit!")
+                
+                    if(len(Chat.message) < 25):
+                        self.reachedMessageLimit = False
+                        Chat.message += chr(event.key)
+                    elif(len(Chat.message) > 25):
+                        Chat.message = Chat.message[:-1]          
+                        print("Reached Limit!")
                     else:
                         Chat.message += chr(event.key)
                         if len(Chat.message) == 25:
@@ -72,5 +73,5 @@ class ChatBox():
 
 
 
-Chat = ChatBox(False , pygame.Rect(0 , 431 , 300 , 169 ) , "" , False)
+Chat = ChatBox(False , pygame.Rect(0 , 431 , 300 , 169 ) , "" )
 
