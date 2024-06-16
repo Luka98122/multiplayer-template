@@ -49,6 +49,15 @@ def handle_client(con):
             
 
             if dat.startswith("<set_name>") == True:
+                do_break = False
+                for con2 in connections:
+                    if con2.name == dat.split("<set_name>")[1]:
+                        con.connection.sendall("<err> Name already taken!".encode())
+                        do_break = True
+                        break
+                if do_break:
+                    continue
+                
                 print(f"CC: Name | {con.name} -> {dat.split('<set_name>')[1]}")
                 con.name = dat.split("<set_name>")[1]
                 for con2 in connections:
@@ -62,16 +71,18 @@ def handle_client(con):
                 con.connection.sendall("Must set a name to send messages!".encode())
                 continue
 
-            if dat.startswith("<set_id>") == True:
-                print(f"CC: ID | {con.id} -> {dat.split('<set_id>')[1]}")
-                con.id = int(dat.split("<set_id>")[1])
             if dat.startswith("<ac>"):
                 for con2 in connections:
                     if con2.id != con.id:
                         msg = "<non>"+"<ac>|"+con.name+"|"+dat.split("<ac>")[1]
                         print(msg)
                         con2.connection.sendall(msg.encode())
-            
+            if dat.startswith("<dm>"):
+                for con2 in connections:
+                    if con2.id != con.id:
+                        msg = "<non>"+"<ac>|"+con.name+"|"+dat.split("<ac>")[1]
+                        print(msg)
+                        con2.connection.sendall(msg.encode())
             
 
 
