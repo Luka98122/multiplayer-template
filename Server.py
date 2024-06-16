@@ -10,8 +10,12 @@ class conn():
         self.connection = 0
         self.id = -1
         self.name = "noname"
+        self.thread = 0
+        self.index = 0
 
 available_ids = [1]*100
+
+kicked = []
 
 connections = []
 
@@ -26,6 +30,7 @@ server_socket.bind((SERVER_HOST, SERVER_PORT))
 
 def handle_client(con):
     while True:
+        
         try:
             data = con.connection.recv(1024)
         except Exception as e:
@@ -43,6 +48,10 @@ def handle_client(con):
                         break
                 return
             print(f"Error: {e}")
+        for i in range(len(kicked)):
+            if con.name == kicked[i]:
+                del kicked[i]
+                return
         if data:
             dat = data.decode().replace('\r','')
             print(f"[*] Received: {dat}")
@@ -67,12 +76,12 @@ def handle_client(con):
                 
                 print(f"CC: Name | {con.name} -> {dat.split('<set_name>')[1]}")
                 if con.name!="noname":
-                    con.name = dat.split("<set_name>")[1]
                     for con2 in connections:
                         if con2.name == con.name:
                             pass
                         else:
-                            con2.connection.sendall(f"<client_rename>|{con.name}|{con.id}".encode())
+                            con2.connection.sendall(f"<client_rename>|{con.name}|{dat.split("<set_name>")[1]}".encode())
+                    con.name = dat.split("<set_name>")[1]
                     continue
                 else:
                     con.name = dat.split("<set_name>")[1]
@@ -106,6 +115,7 @@ def handle_client(con):
 client_handlers = []
 
 def get_new_connections():
+    cnt = 0
     while True:
         server_socket.listen(5)
         print(f"[*] Listening on {SERVER_HOST}:{SERVER_PORT}")
@@ -122,11 +132,61 @@ def get_new_connections():
                 available_ids[i] = 0
                 break
         
-            
+        con1.index = cnt
         connections.append(con1)
         t1 = threading.Thread(target=handle_client,args=[connections[-1]])
         t1.start()
+        connections[-1].thread = t1
         client_handlers.append(t1)
+        cnt+=1
+        
 
 t = threading.Thread(target=get_new_connections)
 t.start()
+
+while True:
+    command = input()
+    if command.startswith("/kick"):
+        name_or_id = command.split(" ")[1]
+        for i in range(len(connections)):
+            if name_or_id == connections[i].name or name_or_id == str(connections[i].id):
+                for con2 in connections:
+                    if con2!=connections[i]:
+                        con2.connection.sendall(f"<clientdc>|{connections[i].name}|{connections[i].id}|".encode())
+                connections[i].connection.sendall("ByeBye".encode())
+                kicked.append(connections[i].name)
+                del client_handlers[connections[i].index]
+                del connections[i].thread
+                del connections[i]
+                break
+                
+            
+    if command.startswith("/rename"):
+        new_name = command.split(" ")[2]
+        name = command.split(" ")[1]
+        name = name.rstrip()
+
+        
+        
+        do_break = False
+        for con2 in connections:
+            if con2.name == new_name:
+                print("<err> Name already taken!")
+                do_break = True
+                break
+        if do_break:
+            continue
+        
+        print(f"CC: Name | {name} -> {new_name}")
+        for con2 in connections:
+            if con2.name == name:
+                pass
+            else:
+                con2.connection.sendall(f"<client_rename>|{name}|{new_name}".encode())
+        for con3 in connections:
+            if con3.name == name:
+                con3.name = new_name
+                break
+        continue
+        pass
+    

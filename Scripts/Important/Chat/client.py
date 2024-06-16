@@ -32,6 +32,10 @@ def handle_server():
             print(f"Error: {e}")
         if data:
             dat = data.decode()
+            if dat == "ByeBye":
+                print("Server disconnected")
+                sys.exit()
+                return
             if dat.startswith("<non>"): # Do not execute anything
                 dat = dat.split("<non>")[1]
                 if dat.startswith("<ac>"):
@@ -70,10 +74,10 @@ def handle_server():
                             del clients[i]
                             break
                 if dat.startswith("<client_rename>"):
-                    new_client_name = dat.split("|")[1]
-                    new_client_id = dat.split("|")[2]
+                    client_name = dat.split("|")[1]
+                    new_client_name = dat.split("|")[2]
                     for i in range(len(clients)):
-                        if clients[i].id == new_client_id:
+                        if clients[i].name == client_name:
                             clients[i].name = new_client_name
                 
 
