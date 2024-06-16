@@ -30,6 +30,9 @@ def main_menu():
         nacrtaj_dugme_bez_centiranja(main_menu_play_button)
         pygame.display.flip()
         sat.tick(30)
+        
+        
+        
 def credits():
     program_radi = True
     while program_radi:
@@ -47,6 +50,9 @@ def credits():
         nacrtaj_dugme_bez_centiranja(credits_to_main_menu_button)
         pygame.display.flip()
         sat.tick(30)
+        
+        
+        
 def play():
     program_radi = True
     while program_radi:

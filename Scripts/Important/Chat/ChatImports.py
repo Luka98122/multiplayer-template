@@ -5,7 +5,7 @@ sys.path.append("Scripts\\Important\\")
 from imports import *
 
 
-
+font = pygame.font.SysFont('Comic Sans MS' , 30)
 
 class ChatBox():
     def __init__(self, enabled  , rect , message ):
@@ -23,14 +23,15 @@ class ChatBox():
     def writeMessage(self , event):
         if Chat.enabled:
             self.enableCooldown -= 1/30
-            if self.enableCooldown <= 0:
-
-                
+            if self.enableCooldown <= 0:   
                 print(Chat.message)
                 if event.key == pygame.K_BACKSPACE:
                     Chat.message = Chat.message[:-1]
+                    
                 else:
                     Chat.message += chr(event.key)
+                    
+                    
     
 
 

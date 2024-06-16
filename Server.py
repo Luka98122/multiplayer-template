@@ -44,8 +44,9 @@ def handle_client(con):
                 return
             print(f"Error: {e}")
         if data:
-            print(f"[*] Received: {data.decode().replace("\r","")}")
-            dat = data.decode()
+            dat = data.decode().replace('\r','')
+            print(f"[*] Received: {dat}")
+            
 
             if dat.startswith("<set_name>") == True:
                 print(f"CC: Name | {con.name} -> {dat.split('<set_name>')[1]}")
