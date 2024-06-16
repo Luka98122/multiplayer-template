@@ -2,9 +2,9 @@ import pygame
 import sys
 
 sys.path.append("Scripts\\Important\\")
-from imports import *
+#from imports import *
 
-
+pygame.init()
 font = pygame.font.SysFont('Comic Sans MS' , 30)
 
 class ChatBox():
