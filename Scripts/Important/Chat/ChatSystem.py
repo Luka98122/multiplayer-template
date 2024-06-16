@@ -3,6 +3,7 @@ import pygame.draw
 from ChatImports import *
 
 
+
 pygame.init()
 window = pygame.display.set_mode((800,600))
 sat = pygame.time.Clock()
@@ -11,6 +12,7 @@ sat = pygame.time.Clock()
 import threading
 import sys
 import socket
+
 
 SERVER_HOST = '127.0.0.1'
 SERVER_PORT = 14242
@@ -32,7 +34,7 @@ def handle_server():
                 print("Server disconnected")
                 sys.exit()
                 return
-            print(f"Erorr: {e}")
+            print(f"Error: {e}")
         if data:
             dat = data.decode()
             if dat.startswith("<non>"): # Do not execute anything

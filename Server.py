@@ -42,7 +42,7 @@ def handle_client(con):
                         del connections[i]
                         break
                 return
-            print(f"Erorr: {e}")
+            print(f"Error: {e}")
         if data:
             print(f"[*] Received: {data.decode()}")
             dat = data.decode()
