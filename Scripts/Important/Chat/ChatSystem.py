@@ -21,7 +21,7 @@ client_socket.sendall("<set_name>DekiNPC".encode())
 
 
 def chat():
-    input_message_render = font.render(Chat.message , False , pygame.Color("white"))
+    input_message_renderer = font.render(Chat.message , False , pygame.Color("white"))
     chatcooldown = f"{round(Chat.enableCooldown , 3)}"
     renderEnableCooldownText = font.render(chatcooldown  , False , pygame.Color("green"))
     
@@ -42,17 +42,20 @@ def chat():
                         
                         client_socket.sendall(f"<ac>{Chat.message}".encode())
                         Chat.message = ""
+                    
+                        
 
                 Chat.disableChat(event)
                 if Chat.enabled:
                     
                     Chat.writeMessage(event)
-                    input_message_render = font.render(Chat.message , False , pygame.Color("green"))
+                    Chat.message = Chat.message.replace('\r','')
+                    input_message_renderer = font.render(Chat.message , False , pygame.Color("green"))
         window.fill((0, 0, 0))
         
         keys = pygame.key.get_pressed()
-        Chat.displayChat(window , renderEnableCooldownText)
-        Chat.renderMessageInput(window , input_message_render)
+        Chat.displayChat(window , renderEnableCooldownText , input_message_renderer)
+        
         if Chat.enableCooldown>0:   
             renderEnableCooldownText = font.render(chatcooldown , False , pygame.Color("green"))
             chatcooldown = f"{round(Chat.enableCooldown , 3)}"
@@ -65,6 +68,8 @@ def chat():
         sat.tick(30)
 
     pygame.quit()
+    
 chat()
-quit()
+
+
 
