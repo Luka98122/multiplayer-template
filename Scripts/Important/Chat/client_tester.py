@@ -1,6 +1,6 @@
 import client
 import random
-client_socket,server_thread,clients = client.setup()
+client_socket,server_thread,clients,no,no2 = client.setup()
 a = random.randint(10,1000)
 client_socket.sendall(f"<set_name>Tester{a}".encode())
 
