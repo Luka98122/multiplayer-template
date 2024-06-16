@@ -1,6 +1,9 @@
 import pygame
 import pyperclip
 from pygame import Vector2
+
+
+
 pygame.init()
 Xrezolucija = 800
 Yrezolucija = 600

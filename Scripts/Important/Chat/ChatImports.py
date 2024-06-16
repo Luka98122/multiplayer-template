@@ -6,6 +6,8 @@ from imports import *
 
 pygame.init()
 font = pygame.font.SysFont('Comic Sans MS' , 30)
+TextBox = pygame.image.load("Pictures\TextBox\TextBox.png")
+TextBox.set_alpha(70)
 
 class ChatBox():
     def __init__(self, enabled  , rect , message ):
@@ -16,7 +18,8 @@ class ChatBox():
     def displayChat(self , surface , cooldownrenderer , input_message_render):
         if self.enabled:
             self.enableCooldown -= 1/30
-            pygame.draw.rect(surface, pygame.Color("white"), self.rect)
+            #pygame.draw.rect(surface, pygame.Color("white"), self.rect)
+            surface.blit(TextBox ,(0 , 430) )
             if self.enableCooldown > 0:    
                 self.renderMessageCooldown(surface , cooldownrenderer)
             self.renderMessageInput(surface , input_message_render)
