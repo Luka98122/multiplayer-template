@@ -55,6 +55,7 @@ def handle_server():
                             clients[i].pr()
                             del clients[i]
                             break
+                
 
 def setup():
     global client_socket
