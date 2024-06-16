@@ -12,17 +12,22 @@ class ChatBox():
         self.enabled = enabled
         self.rect = rect
         self.message = message
-        self.enableCooldown = 0.1
-    def displayChat(self , surface):
+        self.enableCooldown = 0.2
+    def displayChat(self , surface , cooldownrenderer):
         if self.enabled:
+            self.enableCooldown -= 1/30
             pygame.draw.rect(surface, pygame.Color("white"), self.rect)
+            if self.enableCooldown > 0:    
+                self.renderMessageCooldown(surface , cooldownrenderer)
+                
+            
     def disableChat(self , event):
         if event.key == pygame.K_ESCAPE:
             self.enabled = False
 
     def writeMessage(self , event):
         if Chat.enabled:
-            self.enableCooldown -= 1/30
+            
             if self.enableCooldown <= 0:   
                 print(Chat.message)
                 if event.key == pygame.K_BACKSPACE:
@@ -30,7 +35,13 @@ class ChatBox():
                     
                 else:
                     Chat.message += chr(event.key)
+    def renderMessageInput(self , screen , msgtorender):
+        screen.blit(msgtorender , (0,560) )
+    def renderMessageCooldown(self , screen , cooldowntorender):
+        screen.blit(cooldowntorender , (69, 525))
                     
+                    
+    
                     
     
 
