@@ -34,7 +34,8 @@ def handle_server():
                     msg = dat.split("<ac>")[1].split("|")[2]
                     print(f"[All Chat] {name}: {msg}")
             elif dat.startswith("<err>"):
-                print(f"Error: {dat.split("<err>")[1]}")
+                error1 = dat.split("<err>")[1]
+                print(f"Error: {error1}")
             else: # Execute server commands
                 if dat.startswith("<client>"):
 
