@@ -49,6 +49,13 @@ def handle_client(con):
             
 
             if dat.startswith("<set_name>") == True:
+                name = dat.split("<set_name>")[1]
+                name = name.rstrip()
+                if name.count(" ")>0:
+                    con.connection.sendall("<err> Name contains a space!".encode())
+                    continue
+                
+                
                 do_break = False
                 for con2 in connections:
                     if con2.name == dat.split("<set_name>")[1]:
@@ -59,7 +66,16 @@ def handle_client(con):
                     continue
                 
                 print(f"CC: Name | {con.name} -> {dat.split('<set_name>')[1]}")
-                con.name = dat.split("<set_name>")[1]
+                if con.name!="noname":
+                    con.name = dat.split("<set_name>")[1]
+                    for con2 in connections:
+                        if con2.name == con.name:
+                            pass
+                        else:
+                            con2.connection.sendall(f"<client_rename>|{con.name}|{con.id}".encode())
+                    continue
+                else:
+                    con.name = dat.split("<set_name>")[1]
                 for con2 in connections:
                     if con!=con2:
                         if con2.name!="noname":
@@ -78,11 +94,12 @@ def handle_client(con):
                         print(msg)
                         con2.connection.sendall(msg.encode())
             if dat.startswith("<dm>"):
+                name1 = dat.split("<dm>")[1].split(" ")[0]
+                text = dat.split("<dm>")[1].replace(name1,"")
                 for con2 in connections:
-                    if con2.id != con.id:
-                        msg = "<non>"+"<ac>|"+con.name+"|"+dat.split("<ac>")[1]
-                        print(msg)
-                        con2.connection.sendall(msg.encode())
+                    if con2.name ==name1:
+                        con2.connection.sendall(f"<non><dm>|{name1}|{text}".encode())
+                
             
 
 

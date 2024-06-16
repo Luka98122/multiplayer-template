@@ -10,7 +10,7 @@ window = pygame.display.set_mode((800,600))
 sat = pygame.time.Clock()
 
 
-client_socket,server_thread = client.setup()
+client_socket,server_thread,clients,chat_stuff,other_stuff = client.setup()
 client_socket.sendall("<set_name>DekiNPC".encode())
 
 
@@ -26,14 +26,18 @@ def chat():
     chatcooldown = f"{round(Chat.enableCooldown , 3)}"
     renderEnableCooldownText = font.render(chatcooldown  , False , pygame.Color("green"))
     
-    
+    last_seen = None
     running = True
     while running:
+        if len(chat_stuff)!=0 and last_seen!=chat_stuff[-1]:
+            last_seen = chat_stuff[-1]
+            print(f"Just saw: {last_seen}")
         for event in pygame.event.get():
             
             if event.type == pygame.QUIT:
                 running = False
                 
+            
                 
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_t:
