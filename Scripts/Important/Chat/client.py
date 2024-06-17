@@ -20,6 +20,8 @@ clients = []
 client_socket = 0
 def handle_server():
     global client_socket
+    global other_stuff
+    global chat_stuff
     while True:
         try:
             data = client_socket.recv(1024)
@@ -79,6 +81,8 @@ def handle_server():
                     for i in range(len(clients)):
                         if clients[i].name == client_name:
                             clients[i].name = new_client_name
+                            other_stuff.append(dat)
+                            print("Added")
                 
 
 def setup():
