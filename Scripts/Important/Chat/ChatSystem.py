@@ -122,5 +122,3 @@ def chat():
 chat()
 
 
-
-renderMessages()
