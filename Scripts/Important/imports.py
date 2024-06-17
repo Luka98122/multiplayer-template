@@ -6,3 +6,4 @@ import time
 from Buttons import *
 from texts import *
 import time
+import random
