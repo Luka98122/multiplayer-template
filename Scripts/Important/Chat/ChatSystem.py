@@ -57,10 +57,13 @@ def chat():
                     Chat.enabled = True
                 if event.key == pygame.K_RETURN:
                     if (Chat.enabled):
-                        
-                        client_socket.sendall(f"<ac>{Chat.message}".encode())
-                        chat_stuff.append(f"[All Chat] {name}: {Chat.message}")
-                        Chat.message = ""
+                        if Chat.message.strip() == "":
+                            Chat.message = ""
+                        else:
+                            
+                            client_socket.sendall(f"<ac>{Chat.message}".encode())
+                            chat_stuff.append(f"[All Chat] {name}: {Chat.message}")
+                            Chat.message = ""
                     
                         
 
