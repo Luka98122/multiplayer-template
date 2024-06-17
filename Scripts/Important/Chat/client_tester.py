@@ -19,3 +19,4 @@ while True:
         for pre in prefixes:
             message = message.replace(pre[0],pre[1])
         client_socket.sendall(message.encode())
+    

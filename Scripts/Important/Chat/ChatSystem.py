@@ -8,16 +8,27 @@ pygame.init()
 pygame.font.init()
 window = pygame.display.set_mode((800,600))
 sat = pygame.time.Clock()
-
+name = "deki"
 
 client_socket,server_thread,clients,chat_stuff,other_stuff = client.setup()
-client_socket.sendall("<set_name>DekiNPC".encode())
+client_socket.sendall(f"<set_name>{name}".encode())
 
 
 
 
+renderovane_poruke = []
+def renderMessages():
 
+    renderovane_poruke.clear() 
+    y_pos = 550
+    for msg in reversed(chat_stuff):  
+        renderovane_poruke.append(MessageHolder(msg, (2, y_pos)))
+        y_pos -= 20  
 
+    for msg in renderovane_poruke:
+        msg.rendermsg(window)
+    
+    
 
 
 def chat():
@@ -32,6 +43,7 @@ def chat():
         if len(chat_stuff)!=0 and last_seen!=chat_stuff[-1]:
             last_seen = chat_stuff[-1]
             print(f"Just saw: {last_seen}")
+            
         for event in pygame.event.get():
             
             if event.type == pygame.QUIT:
@@ -46,6 +58,7 @@ def chat():
                     if (Chat.enabled):
                         
                         client_socket.sendall(f"<ac>{Chat.message}".encode())
+                        chat_stuff.append(f"[All Chat] {name}: {Chat.message}")
                         Chat.message = ""
                     
                         
@@ -64,10 +77,10 @@ def chat():
         if Chat.enableCooldown>0:   
             renderEnableCooldownText = font.render(chatcooldown , False , pygame.Color("green"))
             chatcooldown = f"{round(Chat.enableCooldown , 3)}"
+        renderMessages()
 
 
-
-
+        
 
         pygame.display.flip()
         sat.tick(30)

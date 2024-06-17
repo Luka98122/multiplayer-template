@@ -80,7 +80,7 @@ def handle_client(con):
                         if con2.name == con.name:
                             pass
                         else:
-                            con2.connection.sendall(f"<client_rename>|{con.name}|{dat.split("<set_name>")[1]}".encode())
+                            con2.connection.sendall(f"<client_rename>|{con.name}|{dat.split('<set_name>')[1]}".encode())
                     con.name = dat.split("<set_name>")[1]
                     continue
                 else:

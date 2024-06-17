@@ -5,7 +5,7 @@ sys.path.append("Scripts\\Important\\")
 from imports import *
 
 pygame.init()
-font = pygame.font.SysFont('Comic Sans MS' , 22)
+font = pygame.font.SysFont('Comic Sans MS' , 14)
 TextBox = pygame.image.load("Pictures\TextBox\TextBox.png")
 TextBox.set_alpha(70)
 InputTextBox = pygame.image.load("Pictures\TextBox\InputTextBox.png")
@@ -65,7 +65,13 @@ class ChatBox():
                     
     
                     
-    
+class MessageHolder():
+    def __init__(self , messagecontent , position):
+        self.messagecontent = messagecontent
+        self.position = position
+    def rendermsg(self , surface):
+        surface.blit(font.render(self.messagecontent , False , pygame.Color("green")) , self.position)
+        
 
 
 
