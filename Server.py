@@ -55,7 +55,15 @@ def handle_client(con):
         if data:
             dat = data.decode().replace('\r','')
             print(f"[*] Received: {dat}")
-            
+            if dat ==  "<diconnect>":
+                for con2 in connections:
+                    if con2!=con:
+                        con2.connection.sendall(f"<clientdc>|{con.name}|{con.id}|".encode())
+                con.connection.sendall("ByeBye".encode())
+                for i in range(len(connections)):
+                    if connections[i]==con:
+                        del connections[i]
+                        break           
 
             if dat.startswith("<set_name>") == True:
                 name = dat.split("<set_name>")[1]
