@@ -1,17 +1,20 @@
 import threading
-
+import random
 import socket
+import client
+import json
 
+import time
+
+def current_milli_time():
+    return round(time.time() * 1000)
 
 class conn():
     def __init__(self) -> None:
         self.ip = 0
         self.port = 0
         self.connection = 0
-        self.id = -1
-        self.name = "noname"
-        self.thread = 0
-        self.index = 0
+        self.cli = client.Client()
 
 DIRT = 0
 STONE = 1
@@ -23,10 +26,37 @@ tiles = {
     WOOD:0
 }
 
+def client_to_json_obj(cli : client.Client):
+    dict1 = {
+        "id": cli.id,
+        "name":cli.name,
+        "money":cli.money,
+        "perms":cli.perms
+    }
+    return json.dumps(dict1)
 
+last_send = 0
 
-
-
+def send_clients():
+    global connections
+    global last_send
+    all_clients = []
+    for i in range(len(connections )):
+        all_clients.append(client_to_json_obj(connections[i].cli))
+    all_clients = json.dumps(all_clients)
+    for i in range(len(connections )):
+        try:
+            connections[i].connection.sendall(f"<clients_update>{all_clients}".encode())
+        except:
+            pass
+    last_send = current_milli_time()
+    
+def sender():
+    global last_send
+    while True:
+        if current_milli_time()-last_send>=1500:
+            send_clients()
+            last_send = current_milli_time()
 
 
 
@@ -53,13 +83,13 @@ def handle_client(con):
             data = con.connection.recv(1024)
         except Exception as e:
             if e.errno == 10054:
-                available_ids[con.id] = 0
-                print(f"{con.name} disconnected")
+                available_ids[con.cli.id] = 1
+                print(f"{con.cli.name} disconnected")
                 
                 
                 for con2 in connections:
                     if con2!=con:
-                        con2.connection.sendall(f"<clientdc>|{con.name}|{con.id}|".encode())
+                        con2.connection.sendall(f"<clientdc>|{con.cli.name}|{con.cli.id}|".encode())
                 for i in range(len(connections)):
                     if connections[i]==con:
                         del connections[i]
@@ -67,7 +97,7 @@ def handle_client(con):
                 return
             print(f"Error: {e}")
         for i in range(len(kicked)):
-            if con.name == kicked[i]:
+            if con.cli.name == kicked[i]:
                 del kicked[i]
                 return
         if data:
@@ -76,7 +106,7 @@ def handle_client(con):
             if dat ==  "<disconnect>":
                 for con2 in connections:
                     if con2!=con:
-                        con2.connection.sendall(f"<clientdc>|{con.name}|{con.id}|".encode())
+                        con2.connection.sendall(f"<clientdc>|{con.cli.name}|{con.cli.id}|".encode())
                 con.connection.sendall("ByeBye".encode())
                 for i in range(len(connections)):
                     if connections[i]==con:
@@ -93,43 +123,53 @@ def handle_client(con):
                 
                 do_break = False
                 for con2 in connections:
-                    if con2.name == dat.split("<set_name>")[1]:
-                        con.connection.sendall("<err> Name already taken!".encode())
+                    if con2.cli.name == dat.split("<set_name>")[1]:
+                        con.cli.connection.sendall("<err> Name already taken!".encode())
                         do_break = True
                         break
                 if do_break:
                     continue
                 
-                print(f"CC: Name | {con.name} -> {dat.split('<set_name>')[1]}")
-                if con.name!="noname":
-                    for con2 in connections:
-                        con2.connection.sendall(f"<client_rename>|{con.name}|{dat.split('<set_name>')[1]}".encode())
-                    con.name = dat.split("<set_name>")[1]
-                    continue
-                else:
-                    con.name = dat.split("<set_name>")[1]
-                for con2 in connections:
-                    if con2.name!="noname":
-                        con.connection.sendall(f"<client>|{con2.name}|{con2.id}|".encode())
-                    if con.name!="noname":
-                        con2.connection.sendall(f"<client>|{con.name}|{con.id}|".encode())
+                print(f"CC: Name | {con.cli.name} -> {dat.split('<set_name>')[1]}")
+                con.cli.name = dat.split('<set_name>')[1]
+                
 
-            if con.name=="noname":
+
+            if con.cli.name=="noname":
                 con.connection.sendall("Must set a name to send messages!".encode())
                 continue
 
             if dat.startswith("<ac>"):
                 for con2 in connections:
-                    msg = "<non>"+"<ac>|"+con.name+"|"+dat.split("<ac>")[1]
-                    print(msg)
+                    msg = "<non>"+"<ac>|"+con.cli.name+"|"+dat.split("<ac>")[1]
                     con2.connection.sendall(msg.encode())
             if dat.startswith("<dm>"):
                 name1 = dat.split("<dm>")[1].split(" ")[0]
                 text = dat.split("<dm>")[1].replace(name1,"")
                 for con2 in connections:
-                    if con2.name ==name1:
-                        con2.connection.sendall(f"<non><dm>|{con.name}|{text}".encode())
-                
+                    if con2.cli.name ==name1:
+                        con2.connection.sendall(f"<non><dm>|{con.cli.name}|{text}".encode())
+            
+            if dat.startswith("<game_solo_"):
+                dat = dat.split("<game_solo_")[1]
+                if dat.startswith("_coinflip>"):
+                    dat =dat.split("_coinflip>")[1]
+                    try:
+                        bet = int(dat.split("|")[0])
+                    except:
+                        con.connection.sendall("<err>Invalid bet amount!".encode())
+                        continue
+                    if bet>con.money:
+                        con.connection.sendall("<err>Not enough money!".encode())
+                    rand = random.randint(0,100)
+                    if rand<=33:
+                        con.money+=bet
+                    else:
+                        con.money-=bet
+                        
+                        
+                    
+                    
             
 
 
@@ -147,9 +187,14 @@ def get_new_connections():
         con1 = conn()
         con1.ip = client_address
         con1.connection = client_socket
+        
+        cli = client.Client()
+        con1.cli = cli
+        con1.cli.name = "NoName_"+str(random.randint(0,1000000))
+        
         for i in range(len(available_ids)):
             if available_ids[i]==1:
-                con1.id = i
+                con1.cli.id = i
                 available_ids[i] = 0
                 break
         
@@ -164,6 +209,10 @@ def get_new_connections():
 
 t = threading.Thread(target=get_new_connections)
 t.start()
+
+sender_thread = threading.Thread(target=sender)
+sender_thread.start()
+
 
 while True:
     command = input()
@@ -191,7 +240,7 @@ while True:
         
         do_break = False
         for con2 in connections:
-            if con2.name == new_name:
+            if con2.cli.name == new_name:
                 print("<err> Name already taken!")
                 do_break = True
                 break
@@ -200,13 +249,13 @@ while True:
         
         print(f"CC: Name | {name} -> {new_name}")
         for con2 in connections:
-            if con2.name == name:
+            if con2.cli.name == name:
                 pass
             else:
                 con2.connection.sendall(f"<client_rename>|{name}|{new_name}".encode())
         for con3 in connections:
-            if con3.name == name:
-                con3.name = new_name
+            if con3.cli.name == name:
+                con3.cli.name = new_name
                 break
         continue
         pass
