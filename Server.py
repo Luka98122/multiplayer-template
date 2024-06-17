@@ -77,20 +77,16 @@ def handle_client(con):
                 print(f"CC: Name | {con.name} -> {dat.split('<set_name>')[1]}")
                 if con.name!="noname":
                     for con2 in connections:
-                        if con2.name == con.name:
-                            pass
-                        else:
-                            con2.connection.sendall(f"<client_rename>|{con.name}|{dat.split('<set_name>')[1]}".encode())
+                        con2.connection.sendall(f"<client_rename>|{con.name}|{dat.split('<set_name>')[1]}".encode())
                     con.name = dat.split("<set_name>")[1]
                     continue
                 else:
                     con.name = dat.split("<set_name>")[1]
                 for con2 in connections:
-                    if con!=con2:
-                        if con2.name!="noname":
-                            con.connection.sendall(f"<client>|{con2.name}|{con2.id}|".encode())
-                        if con.name!="noname":
-                            con2.connection.sendall(f"<client>|{con.name}|{con.id}|".encode())
+                    if con2.name!="noname":
+                        con.connection.sendall(f"<client>|{con2.name}|{con2.id}|".encode())
+                    if con.name!="noname":
+                        con2.connection.sendall(f"<client>|{con.name}|{con.id}|".encode())
 
             if con.name=="noname":
                 con.connection.sendall("Must set a name to send messages!".encode())
