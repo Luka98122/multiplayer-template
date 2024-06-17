@@ -102,7 +102,7 @@ def handle_client(con):
                 text = dat.split("<dm>")[1].replace(name1,"")
                 for con2 in connections:
                     if con2.name ==name1:
-                        con2.connection.sendall(f"<non><dm>|{name1}|{text}".encode())
+                        con2.connection.sendall(f"<non><dm>|{con.name}|{text}".encode())
                 
             
 
