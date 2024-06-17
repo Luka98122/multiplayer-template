@@ -58,7 +58,9 @@ def chat():
         for event in pygame.event.get():
             
             if event.type == pygame.QUIT:
+                client_socket.sendall('<disconnect>')
                 running = False
+                
                 
             
                 
