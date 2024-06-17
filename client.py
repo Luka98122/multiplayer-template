@@ -1,7 +1,7 @@
 import threading
 import sys
 import socket
-
+import json
 
 SERVER_HOST = '127.0.0.1'
 SERVER_PORT = 14242
@@ -10,18 +10,34 @@ chat_stuff = []
 other_stuff = []
 
 
+
+
+
 class Client():
     def __init__(self) -> None:
         self.name = 0
         self.id = 0
+        self.money = 0
+        self.perms = 0
     def pr(self):
         print(f"Client: {self.name}, ID: {self.id}")
+
+def dict_to_client_obj(d :dict):
+    cli = Client()
+    cli.name = d["name"]
+    cli.id = d["id"]
+    cli.money = d["money"]
+    cli.perms = d["perms"]
+    return cli
+
+
 clients = []
 client_socket = 0
 def handle_server():
     global client_socket
     global other_stuff
     global chat_stuff
+    global clients
     while True:
         try:
             data = client_socket.recv(1024)
@@ -55,40 +71,25 @@ def handle_server():
                 print(f"Error: {error1}")
                 other_stuff.append(f"Error: {error1}")
             else: # Execute server commands
-                if dat.startswith("<client>"):
+                if dat.startswith("<clients_update>"):
+                    
+                    clients.clear()
+                    #clients = []
+                    main_obj = dat.split("<clients_update>")[1]
+                    main_obj = json.loads(main_obj)
 
-                    new_client_name = dat.split("|")[1]
-                    new_client_id = dat.split("|")[2]
-                    cli = Client()
-                    cli.name = new_client_name
-                    cli.id = new_client_id
-                    clients.append(cli)
-                    print(f"Added client {cli.name}, ID: {cli.id}")
-                    other_stuff.append(f"Added client {cli.name}, ID: {cli.id}")
-                if dat.startswith("<clientdc>"):
-                    new_client_name = dat.split("|")[1]
-                    new_client_id = dat.split("|")[2]
-                    for i in range(len(clients)):
-                        if clients[i].id == new_client_id:
-                            print("Client Disconnected: ",end="")
-                            other_stuff.append(f"Added client {cli.name}, ID: {cli.id}")
-                            clients[i].pr()
-                            del clients[i]
-                            break
-                if dat.startswith("<client_rename>"):
-                    client_name = dat.split("|")[1]
-                    new_client_name = dat.split("|")[2]
-                    for i in range(len(clients)):
-                        if clients[i].name == client_name:
-                            clients[i].name = new_client_name
-                            other_stuff.append(dat)
-                            print("Added")
+                    for item in main_obj:
+                        item = dict_to_client_obj(json.loads(item))
+                        clients.append(item)
+            
+                    
                 
 
 def setup():
     global client_socket
     global chat_stuff
     global other_stuff
+    global clients
     try:
         client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         client_socket.connect((SERVER_HOST, SERVER_PORT))

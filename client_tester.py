@@ -1,11 +1,17 @@
 import client
 import random
-client_socket,server_thread,clients,no,no2 = client.setup()
+client_socket,server_thread,no3,no,no2 = client.setup()
+clients = client.clients
 a = random.randint(10,1000)
 client_socket.sendall(f"<set_name>Tester{a}".encode())
 
 prefixes = [["/ac ","<ac>"],["/dm ","<dm>"],["/name ","<set_name>"]]
 
+def set_clients(clis):
+    clients = clis
+
+if len(clients)==1:
+    print(10)
 
 while True:
     message = input()
