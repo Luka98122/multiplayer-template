@@ -21,12 +21,13 @@ def renderMessages():
 
     renderovane_poruke.clear() 
     y_pos = 550
-    for msg in reversed(chat_stuff):  
+    for msg in reversed(chat_stuff[-7:]):  
         renderovane_poruke.append(MessageHolder(msg, (2, y_pos)))
         y_pos -= 20  
 
     for msg in renderovane_poruke:
         msg.rendermsg(window)
+    
     
     
 
