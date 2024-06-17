@@ -62,7 +62,7 @@ def chat():
                         else:
                             
                             client_socket.sendall(f"<ac>{Chat.message}".encode())
-                            chat_stuff.append(f"[All Chat] {name}: {Chat.message}")
+                            
                             Chat.message = ""
                     
                         
