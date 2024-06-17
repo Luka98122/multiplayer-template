@@ -13,6 +13,24 @@ class conn():
         self.thread = 0
         self.index = 0
 
+DIRT = 0
+STONE = 1
+WOOD = 2
+
+tiles = {
+    DIRT:0,
+    STONE:0,
+    WOOD:0
+}
+
+
+
+
+
+
+
+
+
 available_ids = [1]*100
 
 kicked = []
