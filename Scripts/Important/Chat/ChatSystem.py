@@ -25,9 +25,12 @@ def renderMessages():
     for msg in reversed(chat_stuff[-7:]):  
         renderovane_poruke.append(MessageHolder(msg, (2, y_pos)))
         y_pos -= 20  
+        print(msg)
 
     for msg in renderovane_poruke:
         msg.rendermsg(window)
+        
+        
     
     
 allChatToggle = False
@@ -58,7 +61,7 @@ def chat():
         for event in pygame.event.get():
             
             if event.type == pygame.QUIT:
-                client_socket.sendall('<disconnect>')
+                client_socket.sendall('<disconnect>'.encode())
                 running = False
                 
                 
@@ -120,3 +123,4 @@ chat()
 
 
 
+renderMessages()

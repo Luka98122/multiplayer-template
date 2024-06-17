@@ -55,7 +55,7 @@ def handle_client(con):
         if data:
             dat = data.decode().replace('\r','')
             print(f"[*] Received: {dat}")
-            if dat ==  "<diconnect>":
+            if dat ==  "<disconnect>":
                 for con2 in connections:
                     if con2!=con:
                         con2.connection.sendall(f"<clientdc>|{con.name}|{con.id}|".encode())
