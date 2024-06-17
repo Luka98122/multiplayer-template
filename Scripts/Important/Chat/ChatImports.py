@@ -52,7 +52,7 @@ class ChatBox():
                             Chat.message += event.unicode
                     else:
                         Chat.message += event.unicode
-                    if(len(Chat.message) > 25):
+                    if(len(Chat.message) > 41):
                         Chat.message = Chat.message[:-1]          
                         print("Reached Limit!")
                     

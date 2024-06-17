@@ -13,6 +13,7 @@ name = "deki"
 client_socket,server_thread,clients,chat_stuff,other_stuff = client.setup()
 client_socket.sendall(f"<set_name>{name}".encode())
 
+prefixes = [["/ac ","<ac>"],["/dm ","<dm>"],["/name ","<set_name>"]]
 
 
 
@@ -29,7 +30,15 @@ def renderMessages():
         msg.rendermsg(window)
     
     
-    
+allChatToggle = False
+dmChatToggle = False
+
+def proverikomande():
+    global prefixes
+    for pre in prefixes:
+        Chat.message = Chat.message.replace(pre[0],pre[1])
+    client_socket.sendall(Chat.message.encode())
+    Chat.message = ""
 
 
 def chat():
@@ -41,6 +50,7 @@ def chat():
     last_seen = None
     running = True
     while running:
+        
         if len(chat_stuff)!=0 and last_seen!=chat_stuff[-1]:
             last_seen = chat_stuff[-1]
             print(f"Just saw: {last_seen}")
@@ -59,11 +69,23 @@ def chat():
                     if (Chat.enabled):
                         if Chat.message.strip() == "":
                             Chat.message = ""
-                        else:
-                            
-                            client_socket.sendall(f"<ac>{Chat.message}".encode())
-                            
+                        elif Chat.message =='/chat a':
+                            global allChatToggle
+                            allChatToggle = not allChatToggle
+                            chat_stuff.append('Toggled All Chat')       
                             Chat.message = ""
+                        else:
+                            if allChatToggle:
+                                if Chat.message.startswith('/'):
+                                    proverikomande()
+                                    
+                                else:
+                                    client_socket.sendall(f"<ac>{Chat.message}".encode())
+                                    Chat.message = ""
+                            else:
+                                proverikomande()
+
+                        
                     
                         
 
