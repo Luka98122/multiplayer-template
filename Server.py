@@ -94,10 +94,9 @@ def handle_client(con):
 
             if dat.startswith("<ac>"):
                 for con2 in connections:
-                    if con2.id != con.id:
-                        msg = "<non>"+"<ac>|"+con.name+"|"+dat.split("<ac>")[1]
-                        print(msg)
-                        con2.connection.sendall(msg.encode())
+                    msg = "<non>"+"<ac>|"+con.name+"|"+dat.split("<ac>")[1]
+                    print(msg)
+                    con2.connection.sendall(msg.encode())
             if dat.startswith("<dm>"):
                 name1 = dat.split("<dm>")[1].split(" ")[0]
                 text = dat.split("<dm>")[1].replace(name1,"")
