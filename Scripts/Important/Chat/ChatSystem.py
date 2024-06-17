@@ -77,8 +77,9 @@ def chat():
         if Chat.enableCooldown>0:   
             renderEnableCooldownText = font.render(chatcooldown , False , pygame.Color("green"))
             chatcooldown = f"{round(Chat.enableCooldown , 3)}"
-        renderMessages()
-
+        
+        if Chat.enabled:
+            renderMessages()
 
         
 

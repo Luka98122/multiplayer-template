@@ -36,26 +36,26 @@ class ChatBox():
             self.enableCooldown = 0.2
             
 
-    def writeMessage(self , event):
-        if Chat.enabled:
-            
-            if self.enableCooldown <= 0:   
+    def writeMessage(self, event):
+        if self.enabled:
+
+            if self.enableCooldown <= 0:
                 print(Chat.message)
                 if event.key == pygame.K_BACKSPACE:
                     Chat.message = Chat.message[:-1]
-                    
                 else:
-                
-                    if(len(Chat.message) < 25):
-                        self.reachedMessageLimit = False
-                        Chat.message += chr(event.key)
-                    elif(len(Chat.message) > 25):
+                    keys_pressed = pygame.key.get_pressed()
+                    if keys_pressed[pygame.K_LSHIFT] or keys_pressed[pygame.K_RSHIFT]:
+                        if event.unicode.isalpha():
+                            Chat.message += event.unicode.upper()
+                        else:
+                            Chat.message += event.unicode
+                    else:
+                        Chat.message += event.unicode
+                    if(len(Chat.message) > 25):
                         Chat.message = Chat.message[:-1]          
                         print("Reached Limit!")
-                    else:
-                        Chat.message += chr(event.key)
-                        if len(Chat.message) == 25:
-                            self.reachedMessageLimit = True
+                    
 
     def renderMessageInput(self , screen , msgtorender):
         screen.blit(msgtorender , (4,570) )
